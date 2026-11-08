@@ -1,0 +1,24 @@
+name: Notion Hanzi
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # chạy mỗi 10 phút
+  workflow_dispatch:          # cho phép bấm chạy thủ công
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cài thư viện
+        run: pip install requests
+
+      - name: Chạy script
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: python notion_hanzi.py
