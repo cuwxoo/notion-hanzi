@@ -1,23 +1,21 @@
-
 name: Notion Hanzi
 
 on:
   schedule:
-    - cron: "3-59/10 * * * *"
-  workflow_dispatch:
+    - cron: "7,22,37,52 * * * *"   # chạy 4 lần mỗi giờ, lệch khỏi mốc đầu giờ
+  workflow_dispatch:                # bấm Run workflow để chạy ngay
 
 permissions:
   contents: read
 
 concurrency:
   group: notion-hanzi
-  cancel-in-progress: false
+  cancel-in-progress: false         # không cho hai lần chạy chồng nhau
 
 jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     steps:
       - uses: actions/checkout@v4
 
@@ -25,18 +23,12 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Cài thư viện
         run: pip install requests
 
-      - name: Check token
+      - name: Chạy script
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
         run: |
-          test -n "$NOTION_TOKEN" || exit 1
-          echo "Token exists"
-
-      - name: Run script
-        env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          PYTHONUNBUFFERED: "1"
-        run: python -u notion_hanzi.py
+          echo "Bắt đầu lúc: $(date -u)"
+          python notion_hanzi.py
